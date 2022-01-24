@@ -11,9 +11,7 @@ import "./LithToken.sol";
 
 // MasterChef is the master of Lith. He can make Lith and he is a fair guy.
 //
-// Note that it's ownable and the owner wields tremendous power. The ownership
-// will be transferred to a governance smart contract once LITHIUM is sufficiently
-// distributed and the community can show to govern itself.
+// Note that it's ownable and the owner wields tremendous power.
 //
 // Have fun reading it. Hopefully it's bug-free. God bless.
 contract MasterChefV2 is Ownable, ReentrancyGuard {
@@ -42,8 +40,8 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         uint256 allocPoint;       // How many allocation points assigned to this pool. LITHs to distribute per block.
         uint256 lastRewardBlock;  // Last block number that LITHs distribution occurs.
         uint256 accLithPerShare;   // Accumulated LITHs per share, times 1e12. See below.
-        uint16 depositFeeBP;      // Deposit fee in basis points
         uint256 lpSupply;
+        uint16 depositFeeBP;      // Deposit fee in basis points
     }
 
     uint256 public constant lithMaximumSupply = 100 * (10 ** 3) * (10 ** 18);
@@ -129,6 +127,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         if (_withUpdate) {
             massUpdatePools();
         }
+        // subtract the old allocPoint from totalAlloc and add the updated value
         totalAllocPoint = totalAllocPoint - poolInfo[_pid].allocPoint + _allocPoint;
         poolInfo[_pid].allocPoint = _allocPoint;
         poolInfo[_pid].depositFeeBP = _depositFeeBP;

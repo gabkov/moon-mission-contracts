@@ -5,11 +5,11 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-// LithToken with Governance.
-contract LithToken is ERC20('LITHIUM', 'LITHIUM'), Ownable {
+// FuelToken with Governance.
+contract FuelToken is ERC20('FUEL', 'FUEL'), Ownable {
 
     constructor() {
-        _mint(address(0x3a1D1114269d7a786C154FE5278bF5b1e3e20d31), uint256(37500000000000000000000));
+        _mint(address(0xaEc43A98f2Ba215b23dCDd3ac5707959A3bf3E26), uint256(37500000000000000000000));
     }
 
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).

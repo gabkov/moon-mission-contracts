@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "./LithToken.sol";
+import "./FuelToken.sol";
 
 // MasterChef is the master of Lith. He can make Lith and he is a fair guy.
 //
@@ -49,7 +49,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     uint256 public constant lithPreMint = 375 * (10 ** 2) * (10 ** 18);
 
     // The LITHIUM TOKEN!
-    LithToken public lith;
+    FuelToken public lith;
     // LITHIUM tokens created per block.
     uint256 public lithPerBlock;
     // Deposit Fee address
@@ -75,7 +75,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     event UpdateStartBlock(uint256 newStartBlock);
 
     constructor(
-        LithToken _lith,
+        FuelToken _lith,
         address _feeAddress,
         uint256 _lithPerBlock,
         uint256 _startBlock

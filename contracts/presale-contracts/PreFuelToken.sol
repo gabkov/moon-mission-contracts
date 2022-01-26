@@ -12,19 +12,19 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
-    address  constant presaleAddress = 0xaEc43A98f2Ba215b23dCDd3ac5707959A3bf3E26;
+    address  constant presaleAddress = 0xE936dAf67f6C33997CC695Ce6bd8eA2e141A1041; // test-acc2
     
     IERC20 public BUSD;
     
     IERC20 preFuel = IERC20(address(this));
 
-    uint256 public salePrice = 5;
+    uint256 public salePrice = 5 * (10 ** 18); // 5 BUSD
 
     uint256 public constant preFuelMaximumSupply = 30000 * (10 ** 18); //30k
 
     uint256 public preFuelRemaining = preFuelMaximumSupply;
     
-    uint256 public maxHardCap = 150000 * (10 ** 6); // 150k usdc
+    uint256 public maxHardCap = 150000 * (10 ** 18); // 15000 BUSD
 
     uint256 public constant maxPreFuelPurchase = 600 * (10 ** 18); // 600 pre-fuel
 
@@ -46,20 +46,31 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
         _mint(address(this), preFuelMaximumSupply);
     }
 
-    function buyPreFuel(uint256 _usdcSpent) external nonReentrant {
+    function buyPreFuel(uint256 _busdSpent) external nonReentrant {
         require(block.number >= startBlock, "presale hasn't started yet, good things come to those that wait");
         require(block.number < endBlock, "presale has ended, come back next time!");
         require(preFuelRemaining > 0, "No more PreFuel remains!");
         require(preFuel.balanceOf(address(this)) > 0, "No more PreFuel left!");
-        require(_usdcSpent > 0, "not enough usdc provided");
-        require(_usdcSpent <= maxHardCap, "PreFuel Presale hardcap reached");
+        require(_busdSpent > 0, "not enough BUSD provided");
+        require(_busdSpent < maxHardCap, "too much BUSD provided");
         require(userPreFuelTotally[msg.sender] < maxPreFuelPurchase, "user has already purchased too much PreFuel");
 
-        uint256 preFuelPurchaseAmount = (_usdcSpent * 1000000000000) / salePrice;
+        uint256 originalPreFuelAmount = (_busdSpent / salePrice) * (10 ** 18);
 
+        uint256 preFuelPurchaseAmount = originalPreFuelAmount;
+
+        if (preFuelPurchaseAmount > maxPreFuelPurchase){
+            preFuelPurchaseAmount = maxPreFuelPurchase;
+        }
+
+        if ((userPreFuelTotally[msg.sender] + preFuelPurchaseAmount) > maxPreFuelPurchase){
+            preFuelPurchaseAmount = maxPreFuelPurchase - userPreFuelTotally[msg.sender];
+        }
+        
         // if we dont have enough left, give them the rest.
-        if (preFuelRemaining < preFuelPurchaseAmount)
+        if (preFuelRemaining < preFuelPurchaseAmount){
             preFuelPurchaseAmount = preFuelRemaining;
+        }
 
         require(preFuelPurchaseAmount > 0, "user cannot purchase 0 PreFuel");
 
@@ -70,12 +81,12 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
         //send PreFuel to user
         preFuel.safeTransfer(msg.sender, preFuelPurchaseAmount);
         // send usdc to presale address
-    	BUSD.safeTransferFrom(msg.sender, address(presaleAddress), _usdcSpent);
+    	BUSD.safeTransferFrom(msg.sender, address(presaleAddress), _busdSpent);
 
         preFuelRemaining = preFuelRemaining - preFuelPurchaseAmount;
         userPreFuelTotally[msg.sender] = userPreFuelTotally[msg.sender] + preFuelPurchaseAmount;
 
-        emit PreFuelPurchased(msg.sender, _usdcSpent, preFuelPurchaseAmount);
+        emit PreFuelPurchased(msg.sender, _busdSpent, preFuelPurchaseAmount);
 
     }
 

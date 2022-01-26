@@ -19,7 +19,7 @@ async function main() {
  
   // Deploying additional tokens
   const tokens = [
-    { name: "Binance USD", symbol: "BUSD" },
+    { name: "BUSD", symbol: "BUSD" },
   ];
 
   const additionalTokens = {};

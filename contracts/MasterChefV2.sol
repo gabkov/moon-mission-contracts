@@ -9,10 +9,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "./FuelToken.sol";
 
-// MasterChef is the master of Lith. He can make Lith and he is a fair guy.
-//
-// Note that it's ownable and the owner wields tremendous power.
-//
+
 // Have fun reading it. Hopefully it's bug-free. God bless.
 contract MasterChefV2 is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
@@ -22,13 +19,13 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         uint256 amount;         // How many LP tokens the user has provided.
         uint256 rewardDebt;     // Reward debt. See explanation below.
         //
-        // We do some fancy math here. Basically, any point in time, the amount of LITHs
+        // We do some fancy math here. Basically, any point in time, the amount of FUEL
         // entitled to a user but is pending to be distributed is:
         //
-        //   pending reward = (user.amount * pool.accLithPerShare) - user.rewardDebt
+        //   pending reward = (user.amount * pool.accFuelPerShare) - user.rewardDebt
         //
         // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
-        //   1. The pool's `accLithPerShare` (and `lastRewardBlock`) gets updated.
+        //   1. The pool's `accFuelPerShare` (and `lastRewardBlock`) gets updated.
         //   2. User receives the pending reward sent to his/her address.
         //   3. User's `amount` gets updated.
         //   4. User's `rewardDebt` gets updated.
@@ -37,21 +34,21 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     // Info of each pool.
     struct PoolInfo {
         IERC20 lpToken;           // Address of LP token contract.
-        uint256 allocPoint;       // How many allocation points assigned to this pool. LITHs to distribute per block.
-        uint256 lastRewardBlock;  // Last block number that LITHs distribution occurs.
-        uint256 accLithPerShare;   // Accumulated LITHs per share, times 1e12. See below.
+        uint256 allocPoint;       // How many allocation points assigned to this pool. FUEL to distribute per block.
+        uint256 lastRewardBlock;  // Last block number that FUEL distribution occurs.
+        uint256 accFuelPerShare;   // Accumulated FUEL per share, times 1e12. See below.
         uint256 lpSupply;
         uint16 depositFeeBP;      // Deposit fee in basis points
     }
 
-    uint256 public constant lithMaximumSupply = 100 * (10 ** 3) * (10 ** 18);
+    uint256 public constant fuelMaximumSupply = 100 * (10 ** 3) * (10 ** 18);
 
-    uint256 public constant lithPreMint = 375 * (10 ** 2) * (10 ** 18);
+    uint256 public constant fuelPreMint = 375 * (10 ** 2) * (10 ** 18);
 
-    // The LITHIUM TOKEN!
-    FuelToken public lith;
-    // LITHIUM tokens created per block.
-    uint256 public lithPerBlock;
+    // The FUEL TOKEN
+    FuelToken public fuel;
+    // FUEL tokens created per block.
+    uint256 public fuelPerBlock;
     // Deposit Fee address
     address public feeAddress;
 
@@ -61,9 +58,9 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     mapping(uint256 => mapping(address => UserInfo)) public userInfo;
     // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
-    // The block number when LITHIUM mining starts.
+    // The block number when FUEL mining starts.
     uint256 public startBlock;
-    // The block number when LITHIUM mining ends.
+    // The block number when FUEL mining ends.
     uint256 public emmissionEndBlock = type(uint256).max;
 
     event addPool(uint256 indexed pid, address lpToken, uint256 allocPoint, uint256 depositFeeBP);
@@ -75,14 +72,14 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     event UpdateStartBlock(uint256 newStartBlock);
 
     constructor(
-        FuelToken _lith,
+        FuelToken _fuel,
         address _feeAddress,
-        uint256 _lithPerBlock,
+        uint256 _fuelPerBlock,
         uint256 _startBlock
     ) {
-        lith = _lith;
+        fuel = _fuel;
         feeAddress = _feeAddress;
-        lithPerBlock = _lithPerBlock;
+        fuelPerBlock = _fuelPerBlock;
         startBlock = _startBlock;
     }
 
@@ -113,7 +110,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         lpToken : _lpToken,
         allocPoint : _allocPoint,
         lastRewardBlock : lastRewardBlock,
-        accLithPerShare : 0,
+        accFuelPerShare : 0,
         depositFeeBP : _depositFeeBP,
         lpSupply: 0
         }));
@@ -121,7 +118,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         emit addPool(poolInfo.length - 1, address(_lpToken), _allocPoint, _depositFeeBP);
     }
 
-    // Update the given pool's LITHIUM allocation point and deposit fee. Can only be called by the owner.
+    // Update the given pool's FUEL allocation point and deposit fee. Can only be called by the owner.
     function set(uint256 _pid, uint256 _allocPoint, uint16 _depositFeeBP, bool _withUpdate) external onlyOwner {
         require(_depositFeeBP <= 401, "set: invalid deposit fee basis points");
         if (_withUpdate) {
@@ -147,18 +144,18 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
             return _to - _from;
     }
 
-    // View function to see pending LITHs on frontend.
-    function pendingLith(uint256 _pid, address _user) external view returns (uint256) {
+    // View function to see pending FUEL on frontend.
+    function pendingFuel(uint256 _pid, address _user) external view returns (uint256) {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
-        uint256 accLithPerShare = pool.accLithPerShare;
+        uint256 accFuelPerShare = pool.accFuelPerShare;
         if (block.number > pool.lastRewardBlock && pool.lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 lithReward = (multiplier * lithPerBlock * pool.allocPoint) / totalAllocPoint;
-            accLithPerShare = accLithPerShare + ((lithReward * 1e12) / pool.lpSupply);
+            uint256 fuelReward = (multiplier * fuelPerBlock * pool.allocPoint) / totalAllocPoint;
+            accFuelPerShare = accFuelPerShare + ((fuelReward * 1e12) / pool.lpSupply);
         }
 
-        return ((user.amount * accLithPerShare) /  1e12) - user.rewardDebt;
+        return ((user.amount * accFuelPerShare) /  1e12) - user.rewardDebt;
     }
 
     // Update reward variables for all pools. Be careful of gas spending!
@@ -182,34 +179,34 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         }
 
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 lithReward = (multiplier * lithPerBlock * pool.allocPoint) / totalAllocPoint;
+        uint256 fuelReward = (multiplier * fuelPerBlock * pool.allocPoint) / totalAllocPoint;
 
         // This shouldn't happen, but just in case we stop rewards.
-        if (lith.totalSupply() > lithMaximumSupply)
-            lithReward = 0;
-        else if ((lith.totalSupply() + lithReward) > lithMaximumSupply)
-            lithReward = lithMaximumSupply - lith.totalSupply();
+        if (fuel.totalSupply() > fuelMaximumSupply)
+            fuelReward = 0;
+        else if ((fuel.totalSupply() + fuelReward) > fuelMaximumSupply)
+            fuelReward = fuelMaximumSupply - fuel.totalSupply();
 
-        if (lithReward > 0)
-            lith.mint(address(this), lithReward);
+        if (fuelReward > 0)
+            fuel.mint(address(this), fuelReward);
 
-        // The first time we reach lithiums max supply we solidify the end of farming.
-        if (lith.totalSupply() >= lithMaximumSupply && emmissionEndBlock == type(uint256).max)
+        // The first time we reach fuel max supply we solidify the end of farming.
+        if (fuel.totalSupply() >= fuelMaximumSupply && emmissionEndBlock == type(uint256).max)
             emmissionEndBlock = block.number;
 
-        pool.accLithPerShare = pool.accLithPerShare + ((lithReward * 1e12) / pool.lpSupply);
+        pool.accFuelPerShare = pool.accFuelPerShare + ((fuelReward * 1e12) / pool.lpSupply);
         pool.lastRewardBlock = block.number;
     }
 
-    // Deposit LP tokens to MasterChef for LITHIUM allocation.
+    // Deposit LP tokens to MasterChef for FUEL allocation.
     function deposit(uint256 _pid, uint256 _amount) external nonReentrant {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
         if (user.amount > 0) {
-            uint256 pending = ((user.amount * pool.accLithPerShare) / 1e12) - user.rewardDebt;
+            uint256 pending = ((user.amount * pool.accFuelPerShare) / 1e12) - user.rewardDebt;
             if (pending > 0) {
-                safeLithTransfer(msg.sender, pending);
+                safeFuelTransfer(msg.sender, pending);
             }
         }
         if (_amount > 0) {
@@ -228,7 +225,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
                 pool.lpSupply = pool.lpSupply + _amount;
             }
         }
-        user.rewardDebt = (user.amount * pool.accLithPerShare) / 1e12;
+        user.rewardDebt = (user.amount * pool.accFuelPerShare) / 1e12;
 
         emit Deposit(msg.sender, _pid, _amount);
     }
@@ -239,16 +236,16 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(_pid);
-        uint256 pending = ((user.amount * pool.accLithPerShare) / 1e12) - user.rewardDebt;
+        uint256 pending = ((user.amount * pool.accFuelPerShare) / 1e12) - user.rewardDebt;
         if (pending > 0) {
-            safeLithTransfer(msg.sender, pending);
+            safeFuelTransfer(msg.sender, pending);
         }
         if (_amount > 0) {
             user.amount = user.amount - _amount;
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
             pool.lpSupply = pool.lpSupply - _amount;
         }
-        user.rewardDebt = (user.amount * pool.accLithPerShare) / 1e12;
+        user.rewardDebt = (user.amount * pool.accFuelPerShare) / 1e12;
         emit Withdraw(msg.sender, _pid, _amount);
     }
 
@@ -270,16 +267,16 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         emit EmergencyWithdraw(msg.sender, _pid, amount);
     }
 
-    // Safe lith transfer function, just in case if rounding error causes pool to not have enough LITHs.
-    function safeLithTransfer(address _to, uint256 _amount) internal {
-        uint256 lithBal = lith.balanceOf(address(this));
+    // Safe fuel transfer function, just in case if rounding error causes pool to not have enough FUEL.
+    function safeFuelTransfer(address _to, uint256 _amount) internal {
+        uint256 fuelBal = fuel.balanceOf(address(this));
         bool transferSuccess = false;
-        if (_amount > lithBal) {
-            transferSuccess = lith.transfer(_to, lithBal);
+        if (_amount > fuelBal) {
+            transferSuccess = fuel.transfer(_to, fuelBal);
         } else {
-            transferSuccess = lith.transfer(_to, _amount);
+            transferSuccess = fuel.transfer(_to, _amount);
         }
-        require(transferSuccess, "safeLithTransfer: transfer failed");
+        require(transferSuccess, "safeFuelTransfer: transfer failed");
     }
 
     function setFeeAddress(address _feeAddress) external {

@@ -28,7 +28,7 @@ async function main() {
     const tokenContract = await MockERC20.deploy(
       token.name,
       token.symbol,
-      getBigNumber(1000000000)
+      getBigNumber(10000000)
     );
     await tokenContract.deployed();
     additionalTokens[`${token.symbol}`] = tokenContract.address;

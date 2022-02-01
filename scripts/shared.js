@@ -74,10 +74,7 @@ async function createPair(
 ) {
   const deadline = new Date().getTime();
   const routerContract = getContract(router, JSON.stringify(UniswapV2Router));
-  const factoryContract = getContract(
-    factory,
-    JSON.stringify(UniswapV2Factory)
-  );
+  const factoryContract = getContract(factory, JSON.stringify(UniswapV2Factory));
   const token0Contract = getContract(token0, JSON.stringify(ERC20));
   const token1Contract = getContract(token1, JSON.stringify(ERC20));
 

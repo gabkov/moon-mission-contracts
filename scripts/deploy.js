@@ -15,7 +15,7 @@ async function main() {
 
   //PRE-FUEL
   const PreFuelToken = await hre.ethers.getContractFactory("PreFuelToken");
-  const preFuelToken = await PreFuelToken.deploy(startBlock, AdditionalTokens.BUSD);
+  const preFuelToken = await PreFuelToken.deploy(startBlock, AdditionalTokens.BUSD);  //TODO BUSD TOKEN WILL BE REMOVED
 
   await preFuelToken.deployed();
 

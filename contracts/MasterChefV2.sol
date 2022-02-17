@@ -41,12 +41,12 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         uint16 depositFeeBP;      // Deposit fee in basis points
     }
 
-    uint256 public constant fuelMaximumSupply = 1000000 * (10 ** 18);
+    uint256 public constant fuelMaximumSupply = 100000 * (10 ** 18);
 
     // The FUEL TOKEN
     FuelToken public fuel;
     // FUEL tokens created per block.
-    uint256 public fuelPerBlock = 1 * (10 ** 18);
+    uint256 public fuelPerBlock = 1 * (10 ** 17);  // 0.1 per block
     // Deposit Fee address
     address public feeAddress;
 

@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
-    address  constant presaleAddress = 0xE936dAf67f6C33997CC695Ce6bd8eA2e141A1041; // test-acc2
+    address constant presaleAddress = 0xE936dAf67f6C33997CC695Ce6bd8eA2e141A1041; // test-acc2
     
     IERC20 public BUSD;
     
@@ -20,11 +20,11 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
 
     uint256 public salePrice = 5 * (10 ** 18); // 5 BUSD
 
-    uint256 public constant preFuelMaximumSupply = 300000 * (10 ** 18); //300k
+    uint256 public constant preFuelMaximumSupply = 30000 * (10 ** 18); //30k
 
     uint256 public preFuelRemaining = preFuelMaximumSupply;
     
-    uint256 public maxHardCap = 150000 * (10 ** 18); // 15000 BUSD
+    uint256 public maxBusdAmount = 3000 * (10 ** 18); // 15000 BUSD
 
     uint256 public constant maxPreFuelPurchase = 600 * (10 ** 18); // 600 pre-fuel
 
@@ -52,7 +52,7 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
         require(preFuelRemaining > 0, "No more PreFuel remains!");
         require(preFuel.balanceOf(address(this)) > 0, "No more PreFuel left!");
         require(_busdSpent > 0, "not enough BUSD provided");
-        require(_busdSpent < maxHardCap, "too much BUSD provided");
+        require(_busdSpent <= maxBusdAmount, "too much BUSD provided");
         require(userPreFuelTotally[msg.sender] < maxPreFuelPurchase, "user has already purchased too much PreFuel");
 
         uint256 originalPreFuelAmount = (_busdSpent / salePrice) * (10 ** 18);

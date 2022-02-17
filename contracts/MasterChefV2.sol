@@ -41,14 +41,12 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         uint16 depositFeeBP;      // Deposit fee in basis points
     }
 
-    uint256 public constant fuelMaximumSupply = 100 * (10 ** 3) * (10 ** 18);
-
-    uint256 public constant fuelPreMint = 375 * (10 ** 2) * (10 ** 18);
+    uint256 public constant fuelMaximumSupply = 1000000 * (10 ** 18);
 
     // The FUEL TOKEN
     FuelToken public fuel;
     // FUEL tokens created per block.
-    uint256 public fuelPerBlock;
+    uint256 public fuelPerBlock = 1 * (10 ** 18);
     // Deposit Fee address
     address public feeAddress;
 
@@ -63,7 +61,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     // The block number when FUEL mining ends.
     uint256 public emmissionEndBlock = type(uint256).max;
 
-    event addPool(uint256 indexed pid, address lpToken, uint256 allocPoint, uint256 depositFeeBP);
+    event AddPool(uint256 indexed pid, address lpToken, uint256 allocPoint, uint256 depositFeeBP);
     event setPool(uint256 indexed pid, address lpToken, uint256 allocPoint, uint256 depositFeeBP);
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
@@ -74,12 +72,10 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     constructor(
         FuelToken _fuel,
         address _feeAddress,
-        uint256 _fuelPerBlock,
         uint256 _startBlock
     ) {
         fuel = _fuel;
         feeAddress = _feeAddress;
-        fuelPerBlock = _fuelPerBlock;
         startBlock = _startBlock;
     }
 
@@ -115,7 +111,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         lpSupply: 0
         }));
 
-        emit addPool(poolInfo.length - 1, address(_lpToken), _allocPoint, _depositFeeBP);
+        emit AddPool(poolInfo.length - 1, address(_lpToken), _allocPoint, _depositFeeBP);
     }
 
     // Update the given pool's FUEL allocation point and deposit fee. Can only be called by the owner.
@@ -182,16 +178,17 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         uint256 fuelReward = (multiplier * fuelPerBlock * pool.allocPoint) / totalAllocPoint;
 
         // This shouldn't happen, but just in case we stop rewards.
-        if (fuel.totalSupply() > fuelMaximumSupply)
+        uint256 totalSupply = fuel.totalSupply();
+        if (totalSupply > fuelMaximumSupply)
             fuelReward = 0;
-        else if ((fuel.totalSupply() + fuelReward) > fuelMaximumSupply)
-            fuelReward = fuelMaximumSupply - fuel.totalSupply();
+        else if ((totalSupply + fuelReward) > fuelMaximumSupply)
+            fuelReward = fuelMaximumSupply - totalSupply;
 
         if (fuelReward > 0)
             fuel.mint(address(this), fuelReward);
 
         // The first time we reach fuel max supply we solidify the end of farming.
-        if (fuel.totalSupply() >= fuelMaximumSupply && emmissionEndBlock == type(uint256).max)
+        if (totalSupply >= fuelMaximumSupply && emmissionEndBlock == type(uint256).max)
             emmissionEndBlock = block.number;
 
         pool.accFuelPerShare = pool.accFuelPerShare + ((fuelReward * 1e12) / pool.lpSupply);
@@ -234,7 +231,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     function withdraw(uint256 _pid, uint256 _amount) external nonReentrant {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
-        require(user.amount >= _amount, "withdraw: not good");
+        require(user.amount >= _amount, "withdraw: not good (too much)");
         updatePool(_pid);
         uint256 pending = ((user.amount * pool.accFuelPerShare) / 1e12) - user.rewardDebt;
         if (pending > 0) {

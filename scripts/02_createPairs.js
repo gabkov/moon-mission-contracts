@@ -45,7 +45,7 @@ async function main() {
   // console.log("[factory]", factory);
 
   const tokens = [
-    { symbol: "BUSD", address: AdditionalTokens.BUSD },
+    { symbol: "USDT", address: AdditionalTokens.USDT },
   ];
 
   let pairsContent = {}

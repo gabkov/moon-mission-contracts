@@ -20,7 +20,7 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
 
     uint256 public salePrice = 5 * (10 ** 18); // 5 BUSD
 
-    uint256 public constant preFuelMaximumSupply = 30000 * (10 ** 18); //30k
+    uint256 public constant preFuelMaximumSupply = 300000 * (10 ** 18); //300k
 
     uint256 public preFuelRemaining = preFuelMaximumSupply;
     
@@ -32,7 +32,7 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
     
     uint256 public endBlock;
 
-    uint256 public constant presaleDuration = 179800; // 5 days aprox
+    uint256 public constant presaleDuration = 144000; // 5 days aprox
 
     mapping(address => uint256) public userPreFuelTotally;
 

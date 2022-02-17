@@ -20,6 +20,7 @@ async function main() {
   // Deploying additional tokens
   const tokens = [
     { name: "BUSD", symbol: "BUSD" },
+    { name: "Tether", symbol: "USDT" }
   ];
 
   const additionalTokens = {};

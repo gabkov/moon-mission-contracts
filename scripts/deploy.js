@@ -5,7 +5,8 @@ const fs = require("fs");
 
 
 const startBlock = 16369474
-const fiveDays = 16369474
+const oneDay = 28800
+const fiveDays = 144000
 const feeAddress = "0xE936dAf67f6C33997CC695Ce6bd8eA2e141A1041" //test-acc2
 const fuelPerBlock = BigNumber.from("100000000000000000")
 

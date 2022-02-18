@@ -18,15 +18,15 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
     
     IERC20 preFuel = IERC20(address(this));
 
-    uint256 public salePrice = 5 * (10 ** 18); // 5 BUSD
+    uint256 public salePrice = 5 * 1e18; // 5 BUSD
 
-    uint256 public constant preFuelMaximumSupply = 30000 * (10 ** 18); //30k
+    uint256 public constant preFuelMaximumSupply = 30000 * 1e18; //30k
 
     uint256 public preFuelRemaining = preFuelMaximumSupply;
     
-    uint256 public maxBusdAmount = 3000 * (10 ** 18); // 15000 BUSD
+    uint256 public maxBusdAmount = 3000 * 1e18; // 15000 BUSD
 
-    uint256 public constant maxPreFuelPurchase = 600 * (10 ** 18); // 600 pre-fuel
+    uint256 public constant maxPreFuelPurchase = 600 * 1e18; // 600 pre-fuel
 
     uint256 public startBlock;
     
@@ -55,7 +55,7 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
         require(_busdSpent <= maxBusdAmount, "too much BUSD provided");
         require(userPreFuelTotally[msg.sender] < maxPreFuelPurchase, "user has already purchased too much PreFuel");
 
-        uint256 originalPreFuelAmount = (_busdSpent / salePrice) * (10 ** 18);
+        uint256 originalPreFuelAmount = (_busdSpent / salePrice) * 1e18;
 
         uint256 preFuelPurchaseAmount = originalPreFuelAmount;
 

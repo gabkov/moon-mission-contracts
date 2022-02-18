@@ -10,7 +10,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./FuelToken.sol";
 
 
-// Have fun reading it. Hopefully it's bug-free. God bless.
 contract MasterChefV2 is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -41,12 +40,12 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         uint16 depositFeeBP;      // Deposit fee in basis points
     }
 
-    uint256 public constant fuelMaximumSupply = 100000 * (10 ** 18);
+    uint256 public constant fuelMaximumSupply = 100000 * 1e18;  //100k
 
     // The FUEL TOKEN
     FuelToken public fuel;
     // FUEL tokens created per block.
-    uint256 public fuelPerBlock = 1 * (10 ** 17);  // 0.1 per block
+    uint256 public fuelPerBlock = 1 * 1e17;  // 0.1 per block
     // Deposit Fee address
     address public feeAddress;
 

@@ -131,12 +131,14 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
         // As we set the multiplier to 0 here after emmissionEndBlock
         // deposits aren't blocked after farming ends.
-        if (_from > emmissionEndBlock)
+        if (_from > emmissionEndBlock){
             return 0;
-        if (_to > emmissionEndBlock)
+        }
+        if (_to > emmissionEndBlock){
             return emmissionEndBlock - _from;
-        else
+        } else {
             return _to - _from;
+        }
     }
 
     // View function to see pending FUEL on frontend.
@@ -178,17 +180,20 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
 
         // This shouldn't happen, but just in case we stop rewards.
         uint256 totalSupply = fuel.totalSupply();
-        if (totalSupply > fuelMaximumSupply)
+        if (totalSupply > fuelMaximumSupply) {
             fuelReward = 0;
-        else if ((totalSupply + fuelReward) > fuelMaximumSupply)
+        } else if ((totalSupply + fuelReward) > fuelMaximumSupply){
             fuelReward = fuelMaximumSupply - totalSupply;
+        }
 
-        if (fuelReward > 0)
+        if (fuelReward > 0){
             fuel.mint(address(this), fuelReward);
+        }
 
         // The first time we reach fuel max supply we solidify the end of farming.
-        if (totalSupply >= fuelMaximumSupply && emmissionEndBlock == type(uint256).max)
+        if (totalSupply >= fuelMaximumSupply && emmissionEndBlock == type(uint256).max){
             emmissionEndBlock = block.number;
+        }
 
         pool.accFuelPerShare = pool.accFuelPerShare + ((fuelReward * 1e12) / pool.lpSupply);
         pool.lastRewardBlock = block.number;
@@ -255,10 +260,11 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         pool.lpToken.safeTransfer(address(msg.sender), amount);
 
         // In the case of an accounting error, we choose to let the user emergency withdraw anyway
-        if (pool.lpSupply >=  amount)
+        if (pool.lpSupply >=  amount){
             pool.lpSupply = pool.lpSupply - amount;
-        else
+        } else {
             pool.lpSupply = 0;
+        }
 
         emit EmergencyWithdraw(msg.sender, _pid, amount);
     }

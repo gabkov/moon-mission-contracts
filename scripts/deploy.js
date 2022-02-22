@@ -21,7 +21,7 @@ async function main() {
   await preFuelToken.deployed();
 
   console.log("PreFuelToken deployed to:", preFuelToken.address);
-  contract_addresses["preFuelToken"] = preFuelToken.address
+  contract_addresses["PRE_FUEL_TOKEN_CONTRACT"] = preFuelToken.address
 
   //FUEL
   const FuelToken = await hre.ethers.getContractFactory("FuelToken");
@@ -30,7 +30,7 @@ async function main() {
   await fuelToken.deployed();
 
   console.log("FuelToken deployed to:", fuelToken.address);
-  contract_addresses["fuelToken"] = fuelToken.address
+  contract_addresses["FUEL_TOKEN_ADDRESS"] = fuelToken.address
 
 
   //FUEL REEDEM
@@ -40,7 +40,7 @@ async function main() {
   await fuelReedem.deployed();
 
   console.log("FuelReedem deployed to:", fuelReedem.address);
-  contract_addresses["fuelReedem"] = fuelReedem.address
+  contract_addresses["FUEL_REEDEM_CONTRACT"] = fuelReedem.address
 
 
   //MASTERCHEF
@@ -50,7 +50,7 @@ async function main() {
   await masterChefV2.deployed();
 
   console.log("MasterChefV2 deployed to:", masterChefV2.address);
-  contract_addresses["masterChef"] = masterChefV2.address
+  contract_addresses["MASTERCHEF"] = masterChefV2.address
 
   console.log("Writing result...");
   fs.writeFileSync(

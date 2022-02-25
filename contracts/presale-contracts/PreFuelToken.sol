@@ -14,7 +14,7 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
 
     address constant presaleAddress = 0xE936dAf67f6C33997CC695Ce6bd8eA2e141A1041; // test-acc2
     
-    IERC20 public BUSD;
+    IERC20 public BUSD = IERC20(0x92325A71cdacf88E45aD12597EE59E662342D03a);
     
     IERC20 preFuel = IERC20(address(this));
 
@@ -39,10 +39,9 @@ contract PreFuelToken is ERC20('PreFuel', 'PFUEL'), ReentrancyGuard, Ownable {
     event StartBlockChanged(uint256 newStartBlock, uint256 newEndBlock);
     event PreFuelPurchased(address sender, uint256 usdcSpent, uint256 preFuelReceived);
 
-    constructor(uint256 _startBlock, address _busdAddress) {
+    constructor(uint256 _startBlock) {
         startBlock  = _startBlock;
         endBlock    = _startBlock + presaleDuration;
-        BUSD = IERC20(_busdAddress);
         _mint(address(this), preFuelMaximumSupply);
     }
 

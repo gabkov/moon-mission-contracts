@@ -45,7 +45,8 @@ async function main() {
   // console.log("[factory]", factory);
 
   const tokens = [
-    { symbol: "USDT", address: AdditionalTokens.USDT },
+    //{ symbol: "BUSD", address: AdditionalTokens.BUSD },
+    { symbol: "WBNB", address: AdditionalTokens.WBNB },
   ];
 
   let pairsContent = {}
@@ -55,10 +56,10 @@ async function main() {
     const pair = await createPair(
       ROUTER_ADDRESS,
       FACTORY_ADDRESS,
-      "0x16D8bfd94E979b2b44599e3bcD2A158a87711Fc0", // on bsc testnet FUEL
+      "0x51efE7b080BB9704610c5a6d777676B111E6226d", // on bsc testnet FUEL
       token.address,
-      getBigNumber(200),
-      getBigNumber(1000),
+      getBigNumber(300),
+      getBigNumber(10000),
       alice.address,
       alice
     );

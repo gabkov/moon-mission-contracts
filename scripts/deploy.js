@@ -16,7 +16,7 @@ async function main() {
 
   //PRE-FUEL
   const PreFuelToken = await hre.ethers.getContractFactory("PreFuelToken");
-  const preFuelToken = await PreFuelToken.deploy(startBlock, AdditionalTokens.BUSD);  //TODO BUSD TOKEN WILL BE REMOVED
+  const preFuelToken = await PreFuelToken.deploy(startBlock); 
 
   await preFuelToken.deployed();
 
@@ -52,6 +52,13 @@ async function main() {
   console.log("MasterChefV2 deployed to:", masterChefV2.address);
   contract_addresses["MASTERCHEF"] = masterChefV2.address
 
+
+  // Transfer Ownership of FUEL to masterchef
+  console.log("transferOwnership to MasterChef");
+  await fuelToken.transferOwnership(masterChefV2.address)
+  console.log("transferOwnership done");
+
+  
   console.log("Writing result...");
   fs.writeFileSync(
     "./scripts/deployed/contract_addresses.json",

@@ -25,7 +25,8 @@ async function main() {
     //{ name: "BTCB", symbol: "BTCB" },
     //{ name: "Ethereum", symbol: "ETH" },
     //{ name: "PancakeSwap Token", symbol: "CAKE" },
-    { name: "PolyDoge", symbol: "PDOGE" },
+    //{ name: "PolyDoge", symbol: "PDOGE" },
+    { name: "USDC", symbol: "USDC" },
   ];
 
   const additionalTokens = {};

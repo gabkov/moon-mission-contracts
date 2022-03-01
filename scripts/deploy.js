@@ -45,7 +45,7 @@ async function main() {
 
   //MASTERCHEF
   const MasterChefV2 = await hre.ethers.getContractFactory("MasterChefV2");
-  const masterChefV2 = await MasterChefV2.deploy(fuelToken.address, feeAddress, fuelPerBlock, startBlock + fiveDays + fiveDays);
+  const masterChefV2 = await MasterChefV2.deploy(fuelToken.address, feeAddress, startBlock + fiveDays + fiveDays);
 
   await masterChefV2.deployed();
 
@@ -58,7 +58,7 @@ async function main() {
   await fuelToken.transferOwnership(masterChefV2.address)
   console.log("transferOwnership done");
 
-  
+
   console.log("Writing result...");
   fs.writeFileSync(
     "./scripts/deployed/contract_addresses.json",

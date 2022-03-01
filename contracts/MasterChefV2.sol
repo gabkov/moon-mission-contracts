@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.0;
 
+import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -49,6 +50,14 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     // Deposit Fee address
     address public feeAddress;
 
+    IUniswapV2Router02 public constant pancakeswapRouter = IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
+    
+    address public burnAddress = 0x000000000000000000000000000000000000dEaD;
+
+    address public PDOGE = 0xe64D316e6AAe57f322A179b118689708b368E163;
+    address public BUSD = 0x92325A71cdacf88E45aD12597EE59E662342D03a;
+    address public constant BUSD_PDOGE = 0x8Ef6125DE5F84056287e1f37dE821A808007886D;
+
     // Info of each pool.
     PoolInfo[] public poolInfo;
     // Info of each user that stakes LP tokens.
@@ -67,6 +76,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event SetFeeAddress(address indexed user, address indexed newAddress);
     event UpdateStartBlock(uint256 newStartBlock);
+    event AddLiquidityPDogeBusd(uint256 pdogeAmount, uint256 busdAmount, uint256 lpAmount);
 
     constructor(
         FuelToken _fuel,
@@ -218,7 +228,17 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
 
             if (pool.depositFeeBP > 0) {
                 uint256 depositFee = (_amount * pool.depositFeeBP) / 10000;
-                pool.lpToken.safeTransfer(feeAddress, depositFee);
+                if(address(pool.lpToken) == PDOGE){
+                    uint256 sellingAmount = depositFee / 2;
+                    // sell half
+                    uint[] memory amounts = swapTokensForBUSD(PDOGE, sellingAmount);
+                    // create LP and burn
+                    addLiquidityForPDoge(amounts[0], amounts[1]);
+                } else if (address(pool.lpToken) == BUSD_PDOGE){
+                    pool.lpToken.safeTransfer(burnAddress, depositFee);  // burn BUSD-PDOGE LP token deposits
+                } else {
+                    pool.lpToken.safeTransfer(feeAddress, depositFee);
+                }
                 user.amount = user.amount + _amount - depositFee;
                 pool.lpSupply = pool.lpSupply + _amount - depositFee;
             } else {
@@ -279,6 +299,45 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
             transferSuccess = fuel.transfer(_to, _amount);
         }
         require(transferSuccess, "safeFuelTransfer: transfer failed");
+    }
+
+    function swapTokensForBUSD(address _saleTokenAddress, uint256 _tokenAmount) private returns (uint[] memory amounts) {
+        require(IERC20(_saleTokenAddress).balanceOf(address(this)) >= _tokenAmount, "insufficient tokens provided!");
+        require(_saleTokenAddress != address(0), "wanted token address can't be the zero address!");
+
+        address[] memory path = new address[](2);
+        path[0] = _saleTokenAddress;
+        path[1] = BUSD;
+        
+        IERC20(_saleTokenAddress).approve(address(pancakeswapRouter), _tokenAmount);
+
+        // make the swap
+        return pancakeswapRouter.swapExactTokensForTokens(
+            _tokenAmount,
+            0,
+            path,
+            address(this),
+            block.timestamp
+        );
+    }
+
+    function addLiquidityForPDoge(uint256 _pdogeAmount, uint256 _busdAmount) private {
+        // approve token transfer
+        IERC20(PDOGE).approve(address(pancakeswapRouter), _pdogeAmount);
+        IERC20(BUSD).approve(address(pancakeswapRouter), _busdAmount);
+
+        (uint amountA, uint amountB, uint liquidity) = pancakeswapRouter.addLiquidity(
+            PDOGE,
+            BUSD,
+            _pdogeAmount,
+            _busdAmount,
+            0, // slippage is unavoidable
+            0, // slippage is unavoidable
+            burnAddress, // burn it immediately
+            block.timestamp
+        );
+
+        emit AddLiquidityPDogeBusd(amountA, amountB, liquidity);
     }
 
     function setFeeAddress(address _feeAddress) external {

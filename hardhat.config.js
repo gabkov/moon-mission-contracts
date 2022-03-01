@@ -25,6 +25,9 @@ module.exports = {
       url: "http://127.0.0.1:8545"
     },
     hardhat: {
+      forking: {
+        url: 'https://speedy-nodes-nyc.moralis.io/73133d3aa8d0da86e1130a4e/bsc/testnet/archive',
+      }
     },
     testnet: {
       url: secrets.bscTestNetUrl,

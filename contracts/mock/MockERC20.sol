@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MockERC20 is ERC20 {
-    uint256 public constant faucetLimit = 500000 * 10**18;
+    uint256 public constant faucetLimit = 5000000000 * 10**18;
 
     constructor(
         string memory name,

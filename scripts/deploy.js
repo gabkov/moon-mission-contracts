@@ -1,22 +1,29 @@
 const hre = require("hardhat");
 const AdditionalTokens = require("./args/additional_tokens_dev.json");
+const pools = require("./args/pools.json");
+const pairedTokens = require("./args/pairs_dev.json");
 const { BigNumber } = ethers;
 const fs = require("fs");
+const { createPairs } = require("./02_createPairs");
+const { getBigNumber } = require("./shared");
+const ERC20 = require("./abis/ERC20.json");
 
 
-const startBlock = 16369474
+const startBlock = 17181311
 const oneDay = 28800
+const oneHour = 1200
 const fiveDays = 144000
 const feeAddress = "0xE936dAf67f6C33997CC695Ce6bd8eA2e141A1041" //test-acc2
-const fuelPerBlock = BigNumber.from("100000000000000000")
 
 async function main() {
+  const signers = await ethers.getSigners();
+  const alice = signers[0];
 
   const contract_addresses = {}
 
   //PRE-FUEL
   const PreFuelToken = await hre.ethers.getContractFactory("PreFuelToken");
-  const preFuelToken = await PreFuelToken.deploy(startBlock, AdditionalTokens.BUSD);  //TODO BUSD TOKEN WILL BE REMOVED
+  const preFuelToken = await PreFuelToken.deploy(startBlock); 
 
   await preFuelToken.deployed();
 
@@ -33,9 +40,11 @@ async function main() {
   contract_addresses["FUEL_TOKEN_ADDRESS"] = fuelToken.address
 
 
+  //await createPairs(fuelToken.address)
+
   //FUEL REEDEM
   const FuelReedem = await hre.ethers.getContractFactory("FuelReedem");
-  const fuelReedem = await FuelReedem.deploy(startBlock + fiveDays, preFuelToken.address, fuelToken.address);
+  const fuelReedem = await FuelReedem.deploy(startBlock + oneHour, preFuelToken.address, fuelToken.address);
 
   await fuelReedem.deployed();
 
@@ -45,7 +54,7 @@ async function main() {
 
   //MASTERCHEF
   const MasterChefV2 = await hre.ethers.getContractFactory("MasterChefV2");
-  const masterChefV2 = await MasterChefV2.deploy(fuelToken.address, feeAddress, fuelPerBlock, startBlock + fiveDays + fiveDays);
+  const masterChefV2 = await MasterChefV2.deploy(fuelToken.address, feeAddress, startBlock + oneHour + oneHour);
 
   await masterChefV2.deployed();
 

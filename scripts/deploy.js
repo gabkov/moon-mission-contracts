@@ -51,10 +51,6 @@ async function main() {
   console.log("FuelReedem deployed to:", fuelReedem.address);
   contract_addresses["FUEL_REEDEM_CONTRACT"] = fuelReedem.address
 
-  //console.log("Sending 30.000 FUEL to FuelReedem")
-  //const FUEL = new ethers.Contract(fuelToken.address, ERC20 , alice);//The wallet itself works fine
-  //await FUEL.transfer(fuelReedem.address, getBigNumber(30000))
-  //console.log("Sent 30.000 FUEL to FuelReedem")
 
   //MASTERCHEF
   const MasterChefV2 = await hre.ethers.getContractFactory("MasterChefV2");
@@ -64,28 +60,6 @@ async function main() {
 
   console.log("MasterChefV2 deployed to:", masterChefV2.address);
   contract_addresses["MASTERCHEF"] = masterChefV2.address
-
-  // Transfer Ownership of FUEL to masterchef
-  //console.log("transferOwnership to MasterChef");
-  //await fuelToken.transferOwnership(masterChefV2.address)
-  //console.log("transferOwnership done");
-
- /*  console.log("Adding pools");
-  await masterChefV2.add(1000, fuelToken.address, 0, true) // 0
-  await masterChefV2.add(500, pools.PDOGE, 300, true) // 1
-  await masterChefV2.add(500, pools.BUSD, 400, true) // 2
-  await masterChefV2.add(500, pools.WBNB, 400, true) // 3
-  await masterChefV2.add(700, pools.BTCB, 400, true) // 4
-  await masterChefV2.add(600, pools.ETH, 400, true) // 5
-  await masterChefV2.add(500, pools.CAKE, 400, true) // 6
-  await masterChefV2.add(1000, pairedTokens.fuel_busd, 0, true) // 7
-  await masterChefV2.add(1000, pairedTokens.fuel_wbnb, 0, true) // 8
-  await masterChefV2.add(1000, pools.BUSD_PDOGE, 200, true) // 9
-  await masterChefV2.add(1000, pools.BUSD_WBNB, 400, true) //10
-  await masterChefV2.add(1000, pools.BUSD_USDT, 400, true) // 11
-  await masterChefV2.add(1000, pools.BUSD_USDC, 400, true) // 12
-  await masterChefV2.add(1000, pools.BTCB_ETH, 400, true) // 13
-  console.log("Pools added"); */
 
   console.log("Writing result...");
   fs.writeFileSync(

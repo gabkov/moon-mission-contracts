@@ -54,9 +54,9 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     
     address public burnAddress = 0x000000000000000000000000000000000000dEaD;
 
-    address public PDOGE = 0xe64D316e6AAe57f322A179b118689708b368E163;
+    address public PDOGE = 0x29E37b668F0aB680Ff140f9ffF30EF41E635EB05;
     address public BUSD = 0x92325A71cdacf88E45aD12597EE59E662342D03a;
-    address public constant BUSD_PDOGE = 0x8Ef6125DE5F84056287e1f37dE821A808007886D;
+    address public constant BUSD_PDOGE = 0xf141A066CA00309D5a89488D750e6EE2510A8faB;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;

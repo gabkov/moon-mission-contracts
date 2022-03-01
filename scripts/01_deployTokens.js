@@ -25,8 +25,8 @@ async function main() {
     //{ name: "BTCB", symbol: "BTCB" },
     //{ name: "Ethereum", symbol: "ETH" },
     //{ name: "PancakeSwap Token", symbol: "CAKE" },
-    //{ name: "PolyDoge", symbol: "PDOGE" },
-    { name: "USDC", symbol: "USDC" },
+    { name: "PolyDoge", symbol: "PDOGE" },
+    //{ name: "USDC", symbol: "USDC" },
   ];
 
   const additionalTokens = {};
@@ -35,7 +35,7 @@ async function main() {
     const tokenContract = await MockERC20.deploy(
       token.name,
       token.symbol,
-      getBigNumber(1000000000)
+      getBigNumber(1000000000000000)
     );
     await tokenContract.deployed();
     additionalTokens[`${token.symbol}`] = tokenContract.address;

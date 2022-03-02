@@ -36,7 +36,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         IERC20 lpToken;           // Address of LP token contract.
         uint256 allocPoint;       // How many allocation points assigned to this pool. FUEL to distribute per block.
         uint256 lastRewardBlock;  // Last block number that FUEL distribution occurs.
-        uint256 accFuelPerShare;   // Accumulated FUEL per share, times 1e12. See below.
+        uint256 accFuelPerShare;   // Accumulated FUEL per share, times 1e24. See below.
         uint256 lpSupply;
         uint16 depositFeeBP;      // Deposit fee in basis points
     }
@@ -160,10 +160,10 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         if (block.number > pool.lastRewardBlock && pool.lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 fuelReward = (multiplier * fuelPerBlock * pool.allocPoint) / totalAllocPoint;
-            accFuelPerShare = accFuelPerShare + ((fuelReward * 1e12) / pool.lpSupply);
+            accFuelPerShare = accFuelPerShare + ((fuelReward * 1e24) / pool.lpSupply);
         }
 
-        return ((user.amount * accFuelPerShare) /  1e12) - user.rewardDebt;
+        return ((user.amount * accFuelPerShare) /  1e24) - user.rewardDebt;
     }
 
     // Update reward variables for all pools. Be careful of gas spending!
@@ -206,7 +206,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
             emmissionEndBlock = block.number;
         }
 
-        pool.accFuelPerShare = pool.accFuelPerShare + ((fuelReward * 1e12) / pool.lpSupply);
+        pool.accFuelPerShare = pool.accFuelPerShare + ((fuelReward * 1e24) / pool.lpSupply);
         pool.lastRewardBlock = block.number;
     }
 
@@ -216,7 +216,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
         if (user.amount > 0) {
-            uint256 pending = ((user.amount * pool.accFuelPerShare) / 1e12) - user.rewardDebt;
+            uint256 pending = ((user.amount * pool.accFuelPerShare) / 1e24) - user.rewardDebt;
             if (pending > 0) {
                 safeFuelTransfer(msg.sender, pending);
             }
@@ -247,7 +247,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
                 pool.lpSupply = pool.lpSupply + _amount;
             }
         }
-        user.rewardDebt = (user.amount * pool.accFuelPerShare) / 1e12;
+        user.rewardDebt = (user.amount * pool.accFuelPerShare) / 1e24;
 
         emit Deposit(msg.sender, _pid, _amount);
     }
@@ -258,7 +258,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good (too much)");
         updatePool(_pid);
-        uint256 pending = ((user.amount * pool.accFuelPerShare) / 1e12) - user.rewardDebt;
+        uint256 pending = ((user.amount * pool.accFuelPerShare) / 1e24) - user.rewardDebt;
         if (pending > 0) {
             safeFuelTransfer(msg.sender, pending);
         }
@@ -267,7 +267,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
             pool.lpSupply = pool.lpSupply - _amount;
         }
-        user.rewardDebt = (user.amount * pool.accFuelPerShare) / 1e12;
+        user.rewardDebt = (user.amount * pool.accFuelPerShare) / 1e24;
         emit Withdraw(msg.sender, _pid, _amount);
     }
 

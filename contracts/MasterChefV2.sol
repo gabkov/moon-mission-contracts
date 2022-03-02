@@ -77,6 +77,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     event SetFeeAddress(address indexed user, address indexed newAddress);
     event UpdateStartBlock(uint256 newStartBlock);
     event AddLiquidityPDogeBusd(uint256 pdogeAmount, uint256 busdAmount, uint256 lpAmount);
+    event UpdateFuelPerBlock(uint256 fuelPerBlock);
 
     constructor(
         FuelToken _fuel,
@@ -354,5 +355,13 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         startBlock = _newStartBlock;
 
         emit UpdateStartBlock(startBlock);
+    }
+
+    // Update the emission rate of DragonEgg. Can only be called by the owner.
+    function setFuelPerBlock( uint256 _fuelPerBlock ) external onlyOwner {
+        require(_fuelPerBlock <= 1 * (10 ** 18), "emissions per block too high" );
+        massUpdatePools();
+        fuelPerBlock = _fuelPerBlock;
+        emit UpdateFuelPerBlock(_fuelPerBlock);
     }
 }

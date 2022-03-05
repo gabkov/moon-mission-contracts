@@ -1,0 +1,6 @@
+{
+    "remappings": [ "@openzeppelin/=./node_modules/@openzeppelin/", "@uniswap/=./node_modules/@uniswap/" ],
+    "optimizer": {
+        "enabled": true
+    }
+   }

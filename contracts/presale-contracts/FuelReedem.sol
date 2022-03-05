@@ -46,7 +46,7 @@ contract FuelReedem is Ownable, ReentrancyGuard {
     }
 
     function sendUnclaimedFuelToDeadAddress() external onlyOwner {
-        require(block.number > preFuelToken.endBlock(), "can only send excess morpheus to dead address after presale has ended");
+        require(block.number > preFuelToken.endBlock(), "can only send excess fuel to dead address after presale has ended");
         require(!hasBurnedUnsoldPresale, "can only burn unsold presale once!");
 
         require(preFuelToken.preFuelRemaining() <= fuelToken.balanceOf(address(this)),

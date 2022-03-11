@@ -70,7 +70,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     uint256 public emmissionEndBlock = type(uint256).max;
 
     event AddPool(uint256 indexed pid, address lpToken, uint256 allocPoint, uint256 depositFeeBP);
-    event setPool(uint256 indexed pid, address lpToken, uint256 allocPoint, uint256 depositFeeBP);
+    event SetPool(uint256 indexed pid, address lpToken, uint256 allocPoint, uint256 depositFeeBP);
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
@@ -79,11 +79,8 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     event AddLiquidityPDogeBusd(uint256 pdogeAmount, uint256 busdAmount, uint256 lpAmount);
     event UpdateFuelPerBlock(uint256 fuelPerBlock);
 
-    constructor(
-        FuelToken _fuel,
-        address _feeAddress,
-        uint256 _startBlock
-    ) {
+    constructor(FuelToken _fuel, address _feeAddress, uint256 _startBlock) {
+        require(_feeAddress != address(0));
         fuel = _fuel;
         feeAddress = _feeAddress;
         startBlock = _startBlock;
@@ -135,7 +132,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
         poolInfo[_pid].allocPoint = _allocPoint;
         poolInfo[_pid].depositFeeBP = _depositFeeBP;
 
-        emit setPool(_pid, address(poolInfo[_pid].lpToken), _allocPoint, _depositFeeBP);
+        emit SetPool(_pid, address(poolInfo[_pid].lpToken), _allocPoint, _depositFeeBP);
     }
 
     // Return reward multiplier over the given _from to _to block.

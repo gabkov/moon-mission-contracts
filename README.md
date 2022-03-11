@@ -20,7 +20,7 @@ npx hardhat flat --output <filename>
 ## Slynther:
 **For all the contracts**
 ```
-slynther .
+slither .
 ```
 **For separated contract** (solc remap required for npm package contracts):
 ```

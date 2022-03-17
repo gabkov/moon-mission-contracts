@@ -46,7 +46,7 @@ contract MasterChefV2 is Ownable, ReentrancyGuard {
     // The FUEL TOKEN
     FuelToken public fuel;
     // FUEL tokens created per block.
-    uint256 public fuelPerBlock = 1 * 1e17;  // 0.1 per block
+    uint256 public fuelPerBlock = 2 * 1e17;  // 0.1 per block 
     // Deposit Fee address
     address public feeAddress;
 

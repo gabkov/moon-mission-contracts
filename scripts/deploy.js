@@ -9,11 +9,11 @@ const { getBigNumber } = require("./shared");
 const ERC20 = require("./abis/ERC20.json");
 
 
-const startBlock = 17181311
+const startBlock = 22861243
 const oneDay = 28800
 const oneHour = 1200
 const fiveDays = 144000
-const feeAddress = "0xE936dAf67f6C33997CC695Ce6bd8eA2e141A1041" //test-acc2
+const feeAddress = "0x36e6C7b333E94af8E20519b113DeC68Cee224Fd0" //account 2
 
 async function main() {
   const signers = await ethers.getSigners();

@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract FuelToken is ERC20('FUEL', 'FUEL'), Ownable {
 
     constructor() {
-        _mint(address(0xaEc43A98f2Ba215b23dCDd3ac5707959A3bf3E26), uint256(37500000000000000000000));
+        _mint(address(0xdEF7820104Ce56395372849859d15E33d46F9FcD), uint256(37500000000000000000000));
     }
 
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).

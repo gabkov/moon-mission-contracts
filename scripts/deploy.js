@@ -9,7 +9,7 @@ const { getBigNumber } = require("./shared");
 const ERC20 = require("./abis/ERC20.json");
 
 
-const startBlock = 22861243
+const startBlock = 22861569
 const oneDay = 28800
 const oneHour = 1200
 const fiveDays = 144000
@@ -40,7 +40,7 @@ async function main() {
   contract_addresses["FUEL_TOKEN_ADDRESS"] = fuelToken.address
 
 
-  //await createPairs(fuelToken.address)
+  await createPairs(fuelToken.address)
 
   //FUEL REEDEM
   const FuelReedem = await hre.ethers.getContractFactory("FuelReedem");

@@ -50,6 +50,13 @@ async function createPairs(fuel){
   );
 }
 
+// createPairs("0xA3D84FF5eBA497E381961aA531B7E3626133f351")
+//   .then(() => process.exit(0))
+//   .catch((error) => {
+//     console.error(error);
+//     process.exit(1);
+//   });
+
 module.exports = {
   createPairs
 }
